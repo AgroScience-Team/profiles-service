@@ -29,12 +29,13 @@ async def create_organization(
     return organization
 
 
-@router.get("", response_model=OrganizationResponseSchema)
-async def get_organization(
-    user_info: TokenPayloadSchema = Depends(Token.get_organization_viewer),
-    service: OrganizationsService = Depends()
-):
-    profile = await service.read_organization(user_id=user_info.org)
+@router.get(
+    "",
+    response_model=OrganizationResponseSchema,
+    dependencies=[Depends(Token.get_payload)]
+)
+async def get_organization(user_id: int, service: OrganizationsService = Depends()):
+    profile = await service.read_organization(user_id)
     return profile
 
 

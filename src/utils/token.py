@@ -45,15 +45,3 @@ class Token:
                 detail="You are not a worker"
             )
         return token_payload
-    
-    @staticmethod
-    def get_organization_viewer(
-        user_id: int = Query(...),
-        token_payload: TokenPayloadSchema = Depends(get_payload)
-    ) -> TokenPayloadSchema:
-        if token_payload.org != user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"You are not a member of organization: {user_id}"
-            )
-        return token_payload

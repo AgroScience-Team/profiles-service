@@ -13,21 +13,11 @@ class OrganizationsService:
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
     
-    async def read_organization(
-        self,
-        profile_id: int = None,
-        user_id: int = None
-    ) -> Organization:
-        if profile_id:
-            result = await self.session.execute(
-                select(Organization)
-                .where(Organization.id == profile_id)
-            )
-        else:
-            result = await self.session.execute(
-                select(Organization)
-                .where(Organization.user_id == user_id)
-            )
+    async def read_organization(self, user_id: int = None) -> Organization:
+        result = await self.session.execute(
+            select(Organization)
+            .where(Organization.user_id == user_id)
+        )
         profile = result.scalar()
         if not profile:
             raise HTTPException(
@@ -64,8 +54,8 @@ class OrganizationsService:
         self,
         user_id: int,
         schema: OrganizationRequestSchema
-    ):
-        _ = await self.read_organization(user_id=user_id)
+    ) -> None:
+        _ = await self.read_organization(user_id)
         await self.session.execute(
             update(Organization)
             .where(Organization.user_id == user_id)
