@@ -10,9 +10,13 @@
 
 ## Сборка и запуск проекта:
     git clone https://github.com/AgroScience-Team/profiles-service.git
+
+Если не создана docker-сеть `agronetwork`, то:
+
+    docker create network agronetwork
     
 Из корневой папки проекта:
 
     docker-compose up -d 
 
-Swagger: `http://0.0.0.0:8002/docs`
+Swagger: `http://0.0.0.0:8001/docs`
