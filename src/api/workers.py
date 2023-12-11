@@ -26,6 +26,15 @@ async def create_worker(
     return profile
 
 
+@router.get("/me", response_model=WorkerResponseSchema)
+async def get_worker_me(
+    worker_info: TokenPayloadSchema = Depends(Token.get_worker_payload),
+    service: WorkersService = Depends()
+):
+    profile = await service.read_worker(int(worker_info.sub))
+    return profile
+
+
 @router.get(
     "",
     response_model=WorkerResponseSchema,
