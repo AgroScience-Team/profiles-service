@@ -1,21 +1,5 @@
 
 services:
-  db:
-    container_name: profiles-db
-    image: postgres:15
-    volumes:
-      - pgdbdata:/var/lib/postgresql/data/
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    env_file:
-      - .env
-    ports:
-      - 5435:5432
-
-
   app:
     build:
       context: .
@@ -26,9 +10,28 @@ services:
       - 8001:8001
     command: sh -c "alembic upgrade head && uvicorn src.main:app --host=0.0.0.0 --port=8001"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
+  migrations:
+    build: .
+    container_name: migrations-tool
+    command: sh -c "alembic upgrade head"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    profiles:
+      - tools
+
+  db:
+    container_name: profiles-db
+    image: postgres:15
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - 5435:5432
 
 volumes:
   pgdbdata:
