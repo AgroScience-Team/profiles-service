@@ -7,9 +7,12 @@
 - PostgreSQL 
 - SQLAlchemy v2
 - Pydantic v2
+- AIOKafka
 
 ## Сборка и запуск проекта:
     git clone https://github.com/AgroScience-Team/profiles-service.git
+
+Поднять Kafka: https://github.com/AgroScience-Team/kafka/blob/main/README.md    
 
 Если не создана docker-сеть `agronetwork`, то:
 
