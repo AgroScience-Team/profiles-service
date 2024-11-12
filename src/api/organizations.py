@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, status
 
 from src.schemas.organization import (
@@ -25,7 +27,7 @@ async def create_organization(
     organization_info: TokenPayloadSchema = Depends(Token.get_organization_payload),
     service: OrganizationsService = Depends()
 ):
-    organization = await service.create_organization(int(organization_info.sub), schema)
+    organization = await service.create_organization(uuid.UUID(organization_info.sub), schema)
     return organization
 
 
@@ -34,7 +36,7 @@ async def get_organization_me(
     organization_info: TokenPayloadSchema = Depends(Token.get_organization_payload),
     service: OrganizationsService = Depends()
 ):
-    profile = await service.read_organization(int(organization_info.sub))
+    profile = await service.read_organization(uuid.UUID(organization_info.sub))
     return profile
 
 
@@ -43,7 +45,7 @@ async def get_organization_me(
     response_model=OrganizationResponseSchema,
     dependencies=[Depends(Token.get_payload)]
 )
-async def get_organization(user_id: int, service: OrganizationsService = Depends()):
+async def get_organization(user_id: uuid.UUID, service: OrganizationsService = Depends()):
     profile = await service.read_organization(user_id)
     return profile
 
@@ -54,7 +56,7 @@ async def update_organization(
     organization_info: TokenPayloadSchema = Depends(Token.get_organization_payload),
     service: OrganizationsService = Depends()
 ):
-    await service.update_organization(organization_info.org, schema)
+    await service.update_organization(uuid.UUID(organization_info.org), schema)
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
@@ -62,4 +64,4 @@ async def delete_organization(
     organization_info: TokenPayloadSchema = Depends(Token.get_organization_payload),
     service: OrganizationsService = Depends()
 ):
-    await service.delete_organization(organization_info.org)
+    await service.delete_organization(uuid.UUID(organization_info.org))

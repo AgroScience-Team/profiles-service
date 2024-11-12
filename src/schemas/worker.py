@@ -1,3 +1,4 @@
+import uuid
 from datetime import date
 
 from pydantic import BaseModel, Field
@@ -12,8 +13,8 @@ class WorkerRequestSchema(BaseModel):
 
 
 class WorkerResponseSchema(WorkerRequestSchema):
-    id: int
-    user_id: int
+    id: uuid.UUID
+    user_id: uuid.UUID
     name: str
     surname: str
     patronymic: str | None

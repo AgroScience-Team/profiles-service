@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, Field
 
 
@@ -11,8 +13,8 @@ class OrganizationRequestSchema(BaseModel):
 
     
 class OrganizationResponseSchema(BaseModel):
-    id: int
-    user_id: int
+    id: uuid.UUID
+    user_id: uuid.UUID
     name: str
     description: str | None
     city: str

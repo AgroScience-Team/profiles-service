@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import Depends, HTTPException, status
 
 from sqlalchemy import delete, select, update
@@ -12,8 +14,8 @@ from src.schemas.organization import OrganizationRequestSchema
 class OrganizationsService:
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
-    
-    async def read_organization(self, user_id: int = None) -> Organization:
+
+    async def read_organization(self, user_id: uuid.UUID = None) -> Organization:
         result = await self.session.execute(
             select(Organization)
             .where(Organization.user_id == user_id)
@@ -25,10 +27,10 @@ class OrganizationsService:
                 detail="Profile not found"
             )
         return profile
-    
+
     async def create_organization(
         self,
-        user_id: int,
+        user_id: uuid.UUID,
         schema: OrganizationRequestSchema
     ) -> Organization:
         organization = Organization(
@@ -52,7 +54,7 @@ class OrganizationsService:
 
     async def update_organization(
         self,
-        user_id: int,
+        user_id: uuid.UUID,
         schema: OrganizationRequestSchema
     ) -> None:
         _ = await self.read_organization(user_id)
@@ -62,8 +64,8 @@ class OrganizationsService:
             .values(**schema.model_dump())
         )
         await self.session.commit()
-        
-    async def delete_organization(self, user_id: int) -> None:
+
+    async def delete_organization(self, user_id: uuid.UUID) -> None:
         await self.session.execute(
             delete(Organization)
             .where(Organization.user_id == user_id)

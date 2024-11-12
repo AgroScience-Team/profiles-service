@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import Depends, HTTPException, status
 
 from sqlalchemy import delete, select, update
@@ -12,8 +14,8 @@ from src.schemas.worker import WorkerRequestSchema
 class WorkersService:
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
-    
-    async def read_worker(self, user_id: int = None) -> Worker:
+
+    async def read_worker(self, user_id: uuid.UUID = None) -> Worker:
         result = await self.session.execute(
             select(Worker)
             .where(Worker.user_id == user_id)
@@ -25,10 +27,10 @@ class WorkersService:
                 detail="Profile not found"
             )
         return profile
-    
+
     async def create_worker(
         self,
-        user_id: int,
+        user_id: uuid.UUID,
         schema: WorkerRequestSchema
     ) -> Worker:
         worker = Worker(
@@ -49,7 +51,7 @@ class WorkersService:
             )
         return worker
 
-    async def update_worker(self, user_id: int, schema: WorkerRequestSchema) -> None:
+    async def update_worker(self, user_id: uuid.UUID, schema: WorkerRequestSchema) -> None:
         _ = await self.read_worker(user_id)
         await self.session.execute(
             update(Worker)
@@ -57,8 +59,8 @@ class WorkersService:
             .values(**schema.model_dump())
         )
         await self.session.commit()
-        
-    async def delete_worker(self, user_id: int) -> None:
+
+    async def delete_worker(self, user_id: uuid.UUID) -> None:
         await self.session.execute(
             delete(Worker)
             .where(Worker.user_id == user_id)
