@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, status
 
 from src.schemas.worker import WorkerRequestSchema, WorkerResponseSchema
@@ -22,7 +24,7 @@ async def create_worker(
     worker_info: TokenPayloadSchema = Depends(Token.get_worker_payload),
     service: WorkersService = Depends()
 ):
-    profile = await service.create_worker(int(worker_info.sub), schema)
+    profile = await service.create_worker(uuid.UUID(worker_info.sub), schema)
     return profile
 
 
@@ -31,7 +33,7 @@ async def get_worker_me(
     worker_info: TokenPayloadSchema = Depends(Token.get_worker_payload),
     service: WorkersService = Depends()
 ):
-    profile = await service.read_worker(int(worker_info.sub))
+    profile = await service.read_worker(uuid.UUID(worker_info.sub))
     return profile
 
 
@@ -40,7 +42,7 @@ async def get_worker_me(
     response_model=WorkerResponseSchema,
     dependencies=[Depends(Token.get_payload)]
 )
-async def get_worker(user_id: int, service: WorkersService = Depends()):
+async def get_worker(user_id: uuid.UUID, service: WorkersService = Depends()):
     profile = await service.read_worker(user_id)
     return profile
 
@@ -51,7 +53,7 @@ async def update_worker(
     worker_info: TokenPayloadSchema = Depends(Token.get_worker_payload),
     service: WorkersService = Depends()
 ):
-    await service.update_worker(int(worker_info.sub), schema)
+    await service.update_worker(uuid.UUID(worker_info.sub), schema)
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
@@ -59,4 +61,4 @@ async def delete_organization(
     worker_info: TokenPayloadSchema = Depends(Token.get_worker_payload),
     service: WorkersService = Depends()
 ):
-    await service.delete_worker(int(worker_info.sub))
+    await service.delete_worker(uuid.UUID(worker_info.sub))

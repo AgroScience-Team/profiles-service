@@ -9,4 +9,4 @@ class TokenPayloadSchema(BaseModel):
     sub: str
     role: str
     email: str
-    org: int
+    org: str
