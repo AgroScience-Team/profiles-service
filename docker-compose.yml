@@ -16,7 +16,7 @@ services:
 
   migrations:
     build: .
-    container_name: migrations-tool
+    container_name: profiles-service-migrations-tool
     command: sh -c "alembic upgrade head"
     depends_on:
       db:
@@ -31,8 +31,8 @@ services:
     env_file:
       - .env
     ports:
-      - 8001:8001
-    command: sh -c "alembic upgrade head && uvicorn src.main:app --host=0.0.0.0 --port=8001"
+      - 8002:8080
+    command: sh -c "alembic upgrade head && uvicorn src.main:app --host=0.0.0.0 --port=8080"
     depends_on:
       db:
         condition: service_healthy
